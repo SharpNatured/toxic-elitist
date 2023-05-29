@@ -20,6 +20,8 @@ class LogUploader:
         # Upload the logs and get the response objects
         responses = self.upload_logs(logs)
 
+        json_files = []  # List to store the names of the JSON files
+
         for response, log in zip(responses, logs):
             if response.status_code == 200:
                 data = response.json()
@@ -27,6 +29,9 @@ class LogUploader:
                 json_file = log + ".json"
                 if not os.path.exists(json_file):
                     self.write_response_body(json_file, data)
+                json_files.append(json_file)  # Append the JSON file to the list
+
+        return json_files  # Return the list of JSON files
 
     def write_response_body(self, json_file, data):
         with open(json_file, 'w', encoding='utf-8') as file:

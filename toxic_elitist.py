@@ -4,7 +4,9 @@ import asyncio
 import yaml
 
 from colors import Colors
+from discord_embed_poster import DiscordEmbedPoster
 from log_uploader import LogUploader
+from report_parser import ReportParser
 
 # Create a bot instance and set command prefix
 intents = Intents.default()
@@ -37,17 +39,31 @@ async def console_input():
         parameters = parts[1:]
 
         # Process the command and parameters
-        print(f'Command: {command_name}, Parameters: {parameters}')
+        print(Colors.YELLOW + f'Command: {command_name}, Parameters: {parameters}' + Colors.RESET)
 
         if command_name == 'upload':            
             uploader = LogUploader()
             uploader.upload(parameters[0])
+
+        if command_name == 'publish':            
+            report_parser = ReportParser()
+            parsed_reports = report_parser.parse_reports(parameters[0])
+            
+            channel_id = load_channel_id()
+            embed_poster = DiscordEmbedPoster(client, channel_id)
+            await embed_poster.post_embed_message(parsed_reports)
 
 # Load the bot token from a YAML file
 def load_bot_token():
     with open('config.yml', 'r') as f:
         config = yaml.safe_load(f)
         return config['bot_token']
+
+# Load the channel id from a YAML file
+def load_channel_id():
+    with open('config.yml', 'r') as f:
+        config = yaml.safe_load(f)
+        return config['channel_id']
 
 # Run the bot with the loaded bot token
 async def run_bot():
