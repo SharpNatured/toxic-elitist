@@ -1,3 +1,4 @@
+import json
 import os
 import re
 import requests
@@ -36,24 +37,20 @@ class LogUploader:
 
         # Write the sorted links to the output file
         with open(output_file, 'w', encoding='utf-8') as file:
-            first_log = sorted_logs[0][0]
-            first_date = first_log[:8]
-            file.write(f"**{first_date[6:8]}/{first_date[4:6]}/{first_date[2:4]}**\n")
-
-            emoji_success = "✅ "
-            emoji_failure = "🤡 "
-            for response, (date_time, _) in zip(responses, sorted_logs):
+            for response, (_, sorted_log) in zip(responses, sorted_logs):
                 if response.status_code == 200:
                     data = response.json()
-                    encounter_success = data.get("encounter", {}).get("success")
                     link = data.get("permalink", "")
-                    if encounter_success:
-                        file.write(emoji_success + link + "\n")
-                    else:
-                        file.write(emoji_failure + link + "\n")
-                else:
-                    file.write(emoji_failure + "\n")
+                    file.write(link + "\n")
+                    # Write response body to a .zevtc.json file
+                    self.write_response_body(sorted_log, data)  
+
                 file.flush()
+
+    def write_response_body(self, log, data):
+        json_file = log + ".json"
+        with open(json_file, 'w', encoding='utf-8') as file:
+            file.write(json.dumps(data))
 
     def upload_logs(self, logs):
         responses = []
