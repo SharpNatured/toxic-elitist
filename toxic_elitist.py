@@ -1,18 +1,16 @@
-import discord
+from discord import Intents
+from discord import Client
 import asyncio
 import yaml
 
+from colors import Colors
+from folder_scanner import FolderScanner
+
 # Create a bot instance and set command prefix
-intents = discord.Intents.default()
+intents = Intents.default()
 
 # Create a client instance
-client = discord.Client(intents=intents)
-
-# Event: Bot is ready and connected to the server
-@client.event
-async def on_ready():
-    print(f'Logged in as {client.user.name} ({client.user.id})')
-    print('------')
+client = Client(intents=intents)
 
 # Function for asynchronous console input
 async def async_input(prompt):
@@ -21,6 +19,11 @@ async def async_input(prompt):
 
 # Function to handle console input
 async def console_input():
+    # Wait until the bot is ready
+    await client.wait_until_ready()
+    
+    print(Colors.GREEN + f'Logged in as {client.user.name} ({client.user.id})' + Colors.RESET)
+
     while True:
         command = await async_input('> ')
 
@@ -36,6 +39,14 @@ async def console_input():
         # Process the command and parameters
         print(f'Command: {command_name}, Parameters: {parameters}')
 
+        if command_name == 'scan':
+            scanner = FolderScanner()
+            found_files = scanner.scan(parameters[0])
+            for file in found_files:
+                print(file)
+            break
+
+        
 # Load the bot token from a YAML file
 def load_bot_token():
     with open('config.yml', 'r') as f:
