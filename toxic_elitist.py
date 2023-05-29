@@ -5,6 +5,7 @@ import yaml
 
 from colors import Colors
 from folder_scanner import FolderScanner
+from log_uploader import LogUploader
 
 # Create a bot instance and set command prefix
 intents = Intents.default()
@@ -44,6 +45,11 @@ async def console_input():
             found_files = scanner.scan(parameters[0])
             for file in found_files:
                 print(file)
+            break
+
+        if command_name == 'upload':            
+            uploader = LogUploader()
+            uploader.upload(parameters[0])
             break
 
         
