@@ -4,7 +4,6 @@ import asyncio
 import yaml
 
 from colors import Colors
-from folder_scanner import FolderScanner
 from log_uploader import LogUploader
 
 # Create a bot instance and set command prefix
@@ -39,12 +38,6 @@ async def console_input():
 
         # Process the command and parameters
         print(f'Command: {command_name}, Parameters: {parameters}')
-
-        if command_name == 'scan':
-            scanner = FolderScanner()
-            found_files = scanner.scan(parameters[0])
-            for file in found_files:
-                print(file)
 
         if command_name == 'upload':            
             uploader = LogUploader()
