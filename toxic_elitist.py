@@ -45,14 +45,11 @@ async def console_input():
             found_files = scanner.scan(parameters[0])
             for file in found_files:
                 print(file)
-            break
 
         if command_name == 'upload':            
             uploader = LogUploader()
             uploader.upload(parameters[0])
-            break
 
-        
 # Load the bot token from a YAML file
 def load_bot_token():
     with open('config.yml', 'r') as f:
