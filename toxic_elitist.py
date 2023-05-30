@@ -6,6 +6,7 @@ import yaml
 from colors import Colors
 from discord_embed_poster import DiscordEmbedPoster
 from log_uploader import LogUploader
+from report_converter import ReportConverter
 from report_parser import ReportParser
 
 # Create a bot instance and set command prefix
@@ -40,6 +41,10 @@ async def console_input():
 
         # Process the command and parameters
         print(Colors.YELLOW + f'Command: {command_name}, Parameters: {parameters}' + Colors.RESET)
+
+        if command_name == 'convert':
+            converter = ReportConverter()
+            converter.convert_links(parameters[0])
 
         if command_name == 'upload':            
             uploader = LogUploader()

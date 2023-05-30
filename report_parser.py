@@ -11,13 +11,14 @@ class ReportParser:
         duration = data['encounter']['duration']
         permalink = data['permalink']
         boss = data['encounter']['boss']
+        isCM = data['encounter']['isCm']
 
         return {
             'success': success,
             'timestamp': encounter_time,
             'duration': duration,
             'permalink': permalink,
-            'encounter': boss
+            'encounter': boss + ' CM' if isCM else boss
         }
 
     def parse_reports(self, directory):

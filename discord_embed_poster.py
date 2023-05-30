@@ -15,27 +15,25 @@ class DiscordEmbedPoster:
     def sort_dps_reports(self, dps_reports):
         sorted_dps_reports = sorted(dps_reports, key=lambda report: report['timestamp'])
         return sorted_dps_reports
+    
+
 
     def create_table_embed(self, dps_reports):
         start_timestamp = dps_reports[0]['timestamp']
 
         last_report = dps_reports[-1]
-        # Convert the Unix timestamp to a datetime object
         timestamp_dt = datetime.datetime.fromtimestamp(last_report['timestamp'])
-        # Create a timedelta object with the duration in seconds
         duration_td = datetime.timedelta(seconds=last_report['duration'])
-        # Add the duration to the timestamp
         end_timestamp_dt = timestamp_dt + duration_td
-        # Convert the end timestamp back to a Unix timestamp
         end_timestamp = int(end_timestamp_dt.timestamp())
 
         embed = discord.Embed(
             title=f'<t:{start_timestamp}:D>',
             description=f'from <t:{start_timestamp}:T> to <t:{end_timestamp}:T>',
-            color=discord.Color.blurple()
+            color=discord.Color.brand_green()
         )
 
-        result_header = 'r'
+        result_header = '👀'
         duration_header = 'duration'
         encounter_header = 'encounter'
 
@@ -52,23 +50,48 @@ class DiscordEmbedPoster:
             result_value += success_emoji + '\n'
             duration_value +=f"{duration_minutes:02d}m {duration_seconds:02d}s" + '\n'
             encounter_value += encounter_link + '\n'
-        
-        embed.add_field(
-            name=result_header,
-            value=result_value,
-            inline=True
-        )
-        
-        embed.add_field(
-            name=duration_header,
-            value=duration_value,
-            inline=True
-        )
-        
-        embed.add_field(
-            name=encounter_header,
-            value=encounter_value,
-            inline=True
-        )
+
+            if len(encounter_value) > 950:
+                embed.add_field(
+                    name=result_header,
+                    value=result_value,
+                    inline=True
+                )
+                
+                embed.add_field(
+                    name=duration_header,
+                    value=duration_value,
+                    inline=True
+                )
+                
+                embed.add_field(
+                    name=encounter_header,
+                    value=encounter_value,
+                    inline=True
+                )
+
+                result_value = ''
+                duration_value = ''
+                encounter_value = ''
+
+
+        if len(encounter_value) > 0:
+            embed.add_field(
+                name=result_header,
+                value=result_value,
+                inline=True
+            )
+            
+            embed.add_field(
+                name=duration_header,
+                value=duration_value,
+                inline=True
+            )
+            
+            embed.add_field(
+                name=encounter_header,
+                value=encounter_value,
+                inline=True
+            )
 
         return embed
