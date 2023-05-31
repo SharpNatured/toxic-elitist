@@ -18,30 +18,17 @@ class LogUploader:
         logs = [os.path.join(dir_path, log) for log in os.listdir(dir_path) if log.endswith('.zevtc')]
 
         # Upload the logs and get the response objects
-        responses = self.upload_logs(logs)
-
-        json_files = []  # List to store the names of the JSON files
-
-        for response, log in zip(responses, logs):
-            if response.status_code == 200:
-                data = response.json()
-                # Write response body to a .zevtc.json file if it doesn't already exist
-                json_file = log + ".json"
-                if not os.path.exists(json_file):
-                    self.write_response_body(json_file, data)
-                json_files.append(json_file)  # Append the JSON file to the list
-
-        return json_files  # Return the list of JSON files
-
-    def write_response_body(self, json_file, data):
-        with open(json_file, 'w', encoding='utf-8') as file:
-            file.write(json.dumps(data))
+        return self.upload_logs(logs)
 
     def upload_logs(self, logs):
-        responses = []
-        progress_bar = tqdm(total=len(logs), desc="Uploading logs", unit="log")
+        json_files = []  # List to store the names of the JSON files
+        filtered_logs = [log for log in logs if not os.path.exists(log + ".json")]
+        if (len(filtered_logs) == 0):
+            return json_files
 
-        for log in logs:
+        progress_bar = tqdm(total=len(filtered_logs), desc="Uploading logs", unit="log")
+
+        for log in filtered_logs:
             retry_count = 0
             response = self.upload_file(log)
 
@@ -51,15 +38,19 @@ class LogUploader:
                 retry_count += 1
                 response = self.upload_file(log)
 
-            if response.status_code == 429:
-                print(f"Upload failed for file: {log}")
+            if response.status_code == 200:
+                json_data = response.json()
+                json_file_path = log + ".json"
+                with open(json_file_path, 'w') as json_file:
+                    json.dump(json_data, json_file, indent=4)
+                json_files.append(json_file_path)
             else:
-                responses.append(response)
+                print(f"Upload failed for file: {log}")
 
             progress_bar.update(1)
 
         progress_bar.close()
-        return responses
+        return json_files
 
     def upload_file(self, file_path):
         with open(file_path, 'rb') as file:

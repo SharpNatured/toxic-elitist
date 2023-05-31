@@ -30,6 +30,8 @@ class ReportConverter:
             else:
                 print(f"Warning: Invalid date-time pattern in link '{link}'.")
 
+        os.remove(links_file)        
+
     @staticmethod
     def get_upload_metadata(link):
         url = "https://dps.report/getUploadMetadata"
