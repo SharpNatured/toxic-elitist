@@ -4,6 +4,8 @@ import requests
 import time
 from tqdm import tqdm
 
+from colors import Colors
+
 UPLOAD_LIMIT = 25
 UPLOAD_SLEEP_TIME = 60
 MAX_RETRY_COUNT = 3
@@ -11,7 +13,7 @@ MAX_RETRY_COUNT = 3
 class LogUploader:
     def upload(self, dir_path):
         if not os.path.isdir(dir_path):
-            print("Invalid directory path.")
+            print(Colors.RED + "Invalid directory path." + Colors.RESET)
             return
 
         # Get all files with the .zevtc extension in the directory
@@ -33,7 +35,8 @@ class LogUploader:
             response = self.upload_file(log)
 
             while response.status_code == 429 and retry_count < MAX_RETRY_COUNT:
-                print("Upload limit reached. Sleeping for 60 seconds before retrying...")
+                print(Colors.YELLOW + "Upload limit reached. Sleeping for 60 seconds before retrying..." +
+                      Colors.RESET)
                 time.sleep(UPLOAD_SLEEP_TIME)
                 retry_count += 1
                 response = self.upload_file(log)
@@ -45,7 +48,7 @@ class LogUploader:
                     json.dump(json_data, json_file, indent=4)
                 json_files.append(json_file_path)
             else:
-                print(f"Upload failed for file: {log}")
+                print(Colors.RED + f"Upload failed for file: {log}" + Colors.RESET)
 
             progress_bar.update(1)
 
