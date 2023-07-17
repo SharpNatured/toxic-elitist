@@ -40,7 +40,7 @@ async def console_input():
         parameters = parts[1:]
 
         # Process the command and parameters
-        print(Colors.YELLOW + f'Command: {command_name}, Parameters: {parameters}' + Colors.RESET)
+        print(f'Command: {command_name}, Parameters: {parameters}')
 
         if command_name == 'convert':
             converter = ReportConverter()

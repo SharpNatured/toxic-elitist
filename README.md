@@ -1,5 +1,17 @@
 # Build .exe
 
 ```
-pyinstaller --onefile sort_logs_dir.py --icon=FurnaceTaken.ico
+pyinstaller -F --add-data "config.yml;." toxic_elitist.py -i FurnaceTaken.ico
+```
+
+```
+convert [directory]
+```
+
+```
+upload [directory]
+```
+
+```
+publish [directory]
 ```
