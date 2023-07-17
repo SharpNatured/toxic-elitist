@@ -9,6 +9,10 @@ class ReportConverter:
     def convert_links(self, directory):
         links_file = os.path.join(directory, "links.txt")
         date_time_pattern = r"\d{8}-\d{6}"
+        
+        if not os.path.exists(links_file):
+            print(Colors.RED + "Links not found" + Colors.RESET)
+            return
 
         with open(links_file, 'r') as f:
             links = f.read().splitlines()
