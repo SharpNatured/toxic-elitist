@@ -15,8 +15,6 @@ class DiscordEmbedPoster:
     def sort_dps_reports(self, dps_reports):
         sorted_dps_reports = sorted(dps_reports, key=lambda report: report['timestamp'])
         return sorted_dps_reports
-    
-
 
     def create_table_embed(self, dps_reports):
         start_timestamp = dps_reports[0]['timestamp']

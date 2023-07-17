@@ -6,6 +6,7 @@ import yaml
 from colors import Colors
 from discord_embed_poster import DiscordEmbedPoster
 from log_uploader import LogUploader
+from logger import log_debug, log_error, log_info
 from report_converter import ReportConverter
 from report_parser import ReportParser
 
@@ -25,7 +26,7 @@ async def console_input():
     # Wait until the bot is ready
     await client.wait_until_ready()
     
-    print(Colors.GREEN + f'Logged in as {client.user.name} ({client.user.id})' + Colors.RESET)
+    log_info(f'Logged in as {client.user.name} ({client.user.id})')
 
     while True:
         command = await async_input('> ')
@@ -40,7 +41,7 @@ async def console_input():
         parameters = parts[1:]
 
         # Process the command and parameters
-        print(f'Command: {command_name}, Parameters: {parameters}')
+        log_debug(f'Command: {command_name}, Parameters: {parameters}')
 
         if command_name == 'convert':
             converter = ReportConverter()
@@ -76,6 +77,10 @@ async def run_bot():
     await client.start(bot_token)
 
 # Start the bot and console input listener concurrently
-loop = asyncio.get_event_loop()
-tasks = asyncio.gather(run_bot(), console_input())
-loop.run_until_complete(tasks)
+try:
+    loop = asyncio.get_event_loop()
+    tasks = asyncio.gather(run_bot(), console_input())
+    loop.run_until_complete(tasks)
+except Exception as e:
+    log_error(f"An unknown error occurred: {e}")
+    input("Press Enter to exit...")

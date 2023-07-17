@@ -4,6 +4,7 @@ import json
 import re
 
 from colors import Colors
+from logger import log_error, log_info, log_warning
 
 class ReportConverter:
     def convert_links(self, directory):
@@ -11,7 +12,7 @@ class ReportConverter:
         date_time_pattern = r"\d{8}-\d{6}"
         
         if not os.path.exists(links_file):
-            print(Colors.RED + "Links not found" + Colors.RESET)
+            log_error("Error: Links file not found.")
             return
 
         with open(links_file, 'r') as f:
@@ -32,17 +33,11 @@ class ReportConverter:
                     with open(json_file_path, 'w') as json_file:
                         json.dump(json_data, json_file, indent=4)
 
-                    print(Colors.GREEN + 
-                          f"'{json_file_name}' created." + 
-                          Colors.RESET)
+                    log_info(f"'{json_file_name}' created.")
                 else:
-                    print(Colors.YELLOW + 
-                          f"Warning: .zevtc file '{file_name}' does not exist." +
-                          Colors.RESET)
+                    log_warning(f"Warning: .zevtc file '{file_name}' does not exist.")
             else:
-                print(Colors.YELLOW + 
-                      f"Warning: Invalid date-time pattern in link '{link}'." +
-                      Colors.RESET)
+                log_warning(f"Warning: Invalid date-time pattern in link '{link}'.")
 
         os.remove(links_file)        
 
@@ -55,7 +50,5 @@ class ReportConverter:
         if response.status_code == 200:
             return response.json()
         else:
-            print(Colors.RED +
-                  f"Error: Failed to fetch metadata for '{link}'" +
-                  Colors.RESET)
+            log_error(f"Error: Failed to fetch metadata for '{link}'")
             return None
