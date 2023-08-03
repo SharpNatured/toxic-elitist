@@ -4,7 +4,6 @@ import requests
 import time
 from tqdm import tqdm
 
-from colors import Colors
 from logger import log_error, log_warning
 
 UPLOAD_LIMIT = 25
@@ -44,8 +43,10 @@ class LogUploader:
             if response.status_code == 200:
                 json_data = response.json()
                 json_file_path = log + ".json"
+
                 with open(json_file_path, 'w') as json_file:
                     json.dump(json_data, json_file, indent=4)
+
                 json_files.append(json_file_path)
             else:
                 log_error(f"Upload failed for file: {log}")

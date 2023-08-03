@@ -3,7 +3,6 @@ import requests
 import json
 import re
 
-from colors import Colors
 from logger import log_error, log_info, log_warning
 
 class ReportConverter:
