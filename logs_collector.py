@@ -11,10 +11,10 @@ class LogsCollector:
 
     def parse_datetime(self, datetime_str):
         datetime_formats = [
-            '%d%m%y-%H%M%S',  # ddMMyy-HHmmss
-            '%d%m%y-%H%M',    # ddMMyy-HHmm
-            '%d%m%y-%H',      # ddMMyy-HH
-            '%d%m%y'          # ddMMyy
+            '%d%m%y',       # ddMMyy
+            '%d%m%y-%H',    # ddMMyy-HH
+            '%d%m%y-%H%M',  # ddMMyy-HHmm
+            '%d%m%y-%H%M%S' # ddMMyy-HHmmss
         ]
 
         datetime_value = None
@@ -44,6 +44,7 @@ class LogsCollector:
         if not os.path.exists(new_folder_path):
             os.makedirs(new_folder_path)
 
+        files_exist = False
         for root, _, files in os.walk(self.source_folder):
             for file in files:
                 file_datetime_str = file[:15]  # Extract yyyyMMdd-HHmmss from filename
@@ -51,5 +52,16 @@ class LogsCollector:
                 if file_datetime >= datetime_value:
                     source_file_path = os.path.join(root, file)
                     target_file_path = os.path.join(new_folder_path, file)
-                    shutil.copy2(source_file_path, target_file_path)
-                    log_info(f"Copied '{file}' to '{new_folder_name}' folder.")
+
+                    if not os.path.exists(target_file_path):
+                        shutil.copy2(source_file_path, target_file_path)
+                        log_info(f"Copied '{file}' to '{new_folder_name}' folder.")
+                    else:
+                        log_info(f"'{file}' already exists in '{new_folder_name}'.")
+
+                    files_exist = True
+
+        if files_exist:
+            return new_folder_path
+        else:
+            return None

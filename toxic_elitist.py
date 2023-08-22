@@ -1,3 +1,4 @@
+from datetime import datetime
 from discord import Intents
 from discord import Client
 import asyncio
@@ -48,21 +49,50 @@ async def console_input():
             converter.convert_links(parameters[0])
 
         if command_name == 'collect':
-            arcdps_logs_path = load_arcdps_logs_path()
-            logs_collector = LogsCollector(arcdps_logs_path, "./logs/")
-            logs_collector.copy_files_by_datetime(parameters[0])
+            collect(parameters[0])
 
-        if command_name == 'upload':            
-            uploader = LogUploader()
-            uploader.upload(parameters[0])
+        if command_name == 'upload':
+            upload(parameters[0]) 
 
-        if command_name == 'publish':            
-            report_parser = ReportParser()
-            parsed_reports = report_parser.parse_reports(parameters[0])
+        if command_name == 'publish':
+            await publish(client, parameters[0])
+
+        if command_name == 'cabs':
+            if (len(parameters) > 0):
+                datetime_str = parameters[0]
+            else:
+                today = datetime.today().date()
+                datetime_str = today.strftime('%d%m%y') + "-21"                
             
-            channel_id = load_channel_id()
-            embed_poster = DiscordEmbedPoster(client, channel_id)
-            await embed_poster.post_embed_message(parsed_reports)
+            directory = collect(datetime_str)
+            if (directory == None):
+                log_info("No files found.")
+            else:
+                upload(directory)
+                await publish(client, directory)
+
+
+def collect(datetime):
+    arcdps_logs_path = load_arcdps_logs_path()
+    logs_collector = LogsCollector(arcdps_logs_path, "./logs/")
+    return logs_collector.copy_files_by_datetime(datetime)
+
+def upload(directory):
+    uploader = LogUploader()
+    files = uploader.upload(directory)
+
+    if (len(files) == 0):
+        log_info("No logs uploaded.")
+
+async def publish(client, directory):
+    report_parser = ReportParser()
+    parsed_reports = report_parser.parse_reports(directory)
+    
+    channel_id = load_channel_id()
+    embed_poster = DiscordEmbedPoster(client, channel_id)
+    await embed_poster.post_embed_message(parsed_reports)
+
+    log_info(f"Discord message posted in \"{channel_id}\".")
 
 # Load the bot token from a YAML file
 def load_bot_token():
