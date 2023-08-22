@@ -27,3 +27,4 @@ env/
 
 # Miscellaneous
 .DS_Store
+logs/

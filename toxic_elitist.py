@@ -3,10 +3,10 @@ from discord import Client
 import asyncio
 import yaml
 
-from colors import Colors
 from discord_embed_poster import DiscordEmbedPoster
 from log_uploader import LogUploader
 from logger import log_debug, log_error, log_info
+from logs_collector import LogsCollector
 from report_converter import ReportConverter
 from report_parser import ReportParser
 
@@ -47,6 +47,11 @@ async def console_input():
             converter = ReportConverter()
             converter.convert_links(parameters[0])
 
+        if command_name == 'collect':
+            arcdps_logs_path = load_arcdps_logs_path()
+            logs_collector = LogsCollector(arcdps_logs_path, "./logs/")
+            logs_collector.copy_files_by_datetime(parameters[0])
+
         if command_name == 'upload':            
             uploader = LogUploader()
             uploader.upload(parameters[0])
@@ -70,6 +75,12 @@ def load_channel_id():
     with open('config.yml', 'r') as f:
         config = yaml.safe_load(f)
         return config['channel_id']
+    
+# Load the arcdps log files path from a YAML file
+def load_arcdps_logs_path():
+    with open('config.yml', 'r') as f:
+        config = yaml.safe_load(f)
+        return config['arcdps_logs']
 
 # Run the bot with the loaded bot token
 async def run_bot():
