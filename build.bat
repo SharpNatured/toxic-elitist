@@ -1,1 +1,1 @@
-pyinstaller -F --add-data "config.yml;." toxic_elitist.py -i FurnaceTaken.ico
+pyinstaller -F --add-data "config.yml;." toxic_elitist.py -i FurnaceTaken.ico --distpath C:/tools/toxic_elitist/
