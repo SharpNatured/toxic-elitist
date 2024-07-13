@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['toxic_elitist.py'],
+    ['src/toxic_elitist.py'],
     pathex=[],
     binaries=[],
-    datas=[('config.yml', '.')],
+    datas=[('src/res/config.yml', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -41,5 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['FurnaceTaken.ico'],
+    icon=['src/res/FurnaceTaken.ico'],
 )
